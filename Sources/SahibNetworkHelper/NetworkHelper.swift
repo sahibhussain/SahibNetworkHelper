@@ -11,10 +11,9 @@ import Alamofire
 
 public class NetworkHelper {
     
-    public static var baseUrl = ""
-    
     public typealias CompletionHandler = (_ response: Result<[String: Any], Error>) -> Void
     public var headers: [String: String] = [:]
+    public var baseURL: String = ""
     
     
     public static let shared = NetworkHelper()
@@ -27,7 +26,7 @@ public class NetworkHelper {
     // MARK: - networkd related
     public func sendPostRequest(_ urlExt: String, param: [String: Any], comp: @escaping CompletionHandler) {
         
-        let urlString = NetworkHelper.baseUrl + urlExt
+        let urlString = baseURL + urlExt
         
         AF.request(urlString, method: .post, parameters: param, encoding: JSONEncoding.default, headers: .init(headers))
             .responseData { response in
@@ -48,7 +47,7 @@ public class NetworkHelper {
     
     public func sendPostRequest(_ urlExt: String, param: [String: String], withFile: [String: URL], comp: @escaping CompletionHandler) {
         
-        let urlString = NetworkHelper.baseUrl + urlExt
+        let urlString = baseURL + urlExt
         
         AF.upload(multipartFormData: { (formData) in
             
@@ -80,7 +79,7 @@ public class NetworkHelper {
     
     public func sendGetRequest(_ urlExt: String, param: String, comp: @escaping CompletionHandler) {
         
-        var urlString = NetworkHelper.baseUrl + urlExt + "?" + param
+        var urlString = baseURL + urlExt + "?" + param
         urlString = urlString.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)!
         
         AF.request(urlString, method: .get, headers: HTTPHeaders(headers))
