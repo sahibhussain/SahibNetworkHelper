@@ -77,6 +77,7 @@ public class NetworkHelper {
         
     }
     
+    
     public func sendGetRequest(_ urlExt: String, param: String, comp: @escaping CompletionHandler) {
         
         var urlString = baseURL + urlExt + "?" + param
@@ -121,6 +122,27 @@ public class NetworkHelper {
         
     }
     
+    
+    public func sendRequest(_ urlExt: String, method: HTTPMethod, param: [String: Any], comp: @escaping CompletionHandler) {
+        
+        let urlString = baseURL + urlExt
+        
+        AF.request(urlString, method: method, parameters: param, encoding: JSONEncoding.default, headers: .init(headers))
+            .responseData { response in
+                switch response.result {
+                case .success(let data):
+                    let json = try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String: Any]
+                    if let json = json {
+                        comp(.success(json))
+                    }else {
+                        comp(.failure(CustomError.invalidData))
+                    }
+                case .failure(let error):
+                    comp(.failure(error))
+                }
+            }
+        
+    }
     
     // MARK: - json related
     public func jsonToString(_ json: [String: Any]) -> String? {
